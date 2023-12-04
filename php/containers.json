@@ -212,8 +212,10 @@
         "DOCKER_SOCKET_PROXY_ENABLED=%DOCKER_SOCKET_PROXY_ENABLED%",
         "REMOVE_DISABLED_APPS=%REMOVE_DISABLED_APPS%",
         "APACHE_PORT=%APACHE_PORT%",
-        "APACHE_IP_BINDING=%APACHE_IP_BINDING%"
+        "APACHE_IP_BINDING=%APACHE_IP_BINDING%",
+        "THIS_IS_AIO=true"
       ],
+      "stop_grace_period": 600,
       "restart": "unless-stopped",
       "devices": [
         "/dev/dri"
@@ -322,6 +324,9 @@
       ],
       "networks": [
         "nextcloud-aio"
+      ],
+      "cap_add": [
+        "MKNOD"
       ]
     },
     {

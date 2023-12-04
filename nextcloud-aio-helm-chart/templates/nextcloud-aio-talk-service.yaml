@@ -11,7 +11,9 @@ metadata:
   name: nextcloud-aio-talk-public
   namespace: {{ .Values.NAMESPACE }}
 spec:
+  ipFamilyPolicy: PreferDualStack
   type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
     - name: "{{ .Values.TALK_PORT }}"
       port: {{ .Values.TALK_PORT }}
@@ -34,6 +36,7 @@ metadata:
   name: nextcloud-aio-talk
   namespace: {{ .Values.NAMESPACE }}
 spec:
+  ipFamilyPolicy: PreferDualStack
   ports:
     - name: "8081"
       port: 8081

@@ -1,9 +1,9 @@
-FROM php:8.1.24-fpm-alpine3.18
+FROM php:8.1.26-fpm-alpine3.18
 
 ENV PHP_MEMORY_LIMIT 512M
 ENV PHP_UPLOAD_LIMIT 10G
 ENV PHP_MAX_TIME 3600
-ENV NEXTCLOUD_VERSION 27.1.3
+ENV NEXTCLOUD_VERSION 27.1.4
 ENV AIO_TOKEN 123456
 ENV AIO_URL localhost
 
@@ -68,9 +68,9 @@ RUN set -ex; \
     ; \
     \
 # pecl will claim success even if one install fails, so we need to perform each install separately
-    pecl install APCu-5.1.22; \
+    pecl install APCu-5.1.23; \
     pecl install memcached-3.2.0; \
-    pecl install redis-6.0.1; \
+    pecl install redis-6.0.2; \
     pecl install imagick-3.7.0; \
     \
     docker-php-ext-enable \
@@ -195,10 +195,10 @@ RUN set -ex; \
     \
     grep -q '^pm = dynamic' /usr/local/etc/php-fpm.d/www.conf; \
     sed -i 's/^pm = dynamic/pm = ondemand/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i 's/^pm.max_children =.*/pm.max_children = 80/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i 's/^pm.start_servers =.*/pm.start_servers = 2/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i 's/^pm.min_spare_servers =.*/pm.min_spare_servers = 1/' /usr/local/etc/php-fpm.d/www.conf; \
-    sed -i 's/^pm.max_spare_servers =.*/pm.max_spare_servers = 3/' /usr/local/etc/php-fpm.d/www.conf; \
+# Sync this with max db connections
+# We don't actually expect so many children but don't want to limit it artificially because people will report issues otherwise.
+# Also children will usually be terminated again after the process is done due to the ondemand setting
+    sed -i 's/^pm.max_children =.*/pm.max_children = 5000/' /usr/local/etc/php-fpm.d/www.conf; \
     sed -i 's|access.log = /proc/self/fd/2|access.log = /proc/self/fd/1|' /usr/local/etc/php-fpm.d/docker.conf; \
     \
     rm -rf /tmp/nextcloud-aio && \
